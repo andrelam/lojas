@@ -1,0 +1,14 @@
+/*
+var controller = require('../controllers/authClient');
+var auth       = require('../controllers/auth');
+
+module.exports = function(api) {
+
+	api.route('/authClients')
+		.get(auth.isAuthenticated, controller.getAuthClients);
+		
+	api.route('/authClient')
+		.post(auth.isAuthenticated, controller.postAuthClient);
+
+};
+*/

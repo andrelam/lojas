@@ -1,0 +1,61 @@
+<!-- Navigation -->
+<nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+	<div class="navbar-header">
+		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+			<span class="sr-only">Toggle navigation</span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+		</button>
+		<a class="navbar-brand" href="/">.'. Loja .'.</a>
+	</div>
+	<!-- /.navbar-header -->
+	<ul class="nav navbar-top-links navbar-right">
+		<li class="dropdown">
+			<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+				<i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i>
+			</a>
+			<ul class="dropdown-menu dropdown-user">
+				<li><a href="/profile"><i class="fa fa-user fa-fw"></i> Perfil</a>
+				</li>
+				<li><a href="config"><i class="fa fa-gear fa-fw"></i> Configura&ccedil;&otilde;es</a>
+				</li>
+				<li class="divider" ng-if="user.admin == true"></li>
+				<li ng-if="user.admin == true"><a href="/admin"><i class="fa fa-sitemap fa-fw"></i> Administra&ccedil;&atilde;o</a>
+				</li>
+				<li class="divider"></li>
+				<li><a href="/logout"><i class="fa fa-sign-out fa-fw"></i> Sair</a>
+				</li>
+			</ul>
+			<!-- /.dropdown-user -->
+		</li>
+		<!-- /.dropdown -->
+	</ul>
+	<!-- /.navbar-top-links -->
+</nav>
+
+<div class="col-sm-6 col-sm-offset-3">
+
+	<h1><span class="fa fa-user"></span> Add Local Account</h1>
+
+	<div growl></div>
+
+	<!-- LOGIN FORM -->
+	<form ng-controller="LoginForm" ng-submit="connect()">
+		<div class="form-group">
+			<label>Email</label>
+			<input type="text" class="form-control" ng-model="email">
+		</div>
+		<div class="form-group">
+			<label>Password</label>
+			<input type="password" class="form-control" ng-model="password">
+		</div>
+
+		<button type="submit" class="btn btn-warning btn-lg">Add Local</button>
+	</form>
+
+	<hr>
+
+	<p><a href="/templo">Go back to profile</a></p>
+
+</div>
