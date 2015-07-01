@@ -7,13 +7,14 @@ var ENV = process.env.NODE_ENV || 'dev'; // Assume dev env. for safety
 var fs         = require('fs');
 var express    = require('express');
 var app        = express();
-var port       = process.env.PORT || 8000;
-var ports      = process.env.PORTS || 8080;
+var port       = process.env.PORT || 3102;
+var ports      = process.env.PORTS || 3103;
 var mongoose   = require('mongoose');
 var passport   = require('passport');
 var path       = require('path');
 var https      = require('https');
-
+var helmet     = require('helmet');
+var csrf       = require('csurf');
 var morgan         = require('morgan');
 var cookieParser   = require('cookie-parser');
 var bodyParser     = require('body-parser');
@@ -30,13 +31,16 @@ var configSecret = require('./config/secret.js')[ENV];
 app.use(compression({threshold: 512}));
 app.use(morgan(ENV)); // log every request to the console
 
-app.use(cookieParser()); // read cookies (needed for auth)
 app.use(bodyParser.urlencoded({ extended: true }));     // get information from html forms
 app.use(bodyParser.json());
 app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse application/vnd.api+json as json
 
+app.use(helmet());
+
 // override with the X-HTTP-Method-Override header in the request. simulate DELETE/PUT
 app.use(methodOverride('X-HTTP-Method-Override'));
+
+app.use(cookieParser()); // read cookies (needed for auth)
 
 app.use(passport.initialize());
 
@@ -63,6 +67,13 @@ app.use(session({
 
 app.set('jsonkeysecret', configSecret.secret.secret);
 
+app.use(csrf({ cookie: true }));
+
+app.use(function (req, res, next) {
+	res.locals._csrf = req.csrfToken();
+	next();
+});
+
 app.use(express.static(path.join(__dirname, '/public'))); //Expose /public
 
 // routes ======================================================================
@@ -78,18 +89,20 @@ var credentials = {
     cert: hscert
 };
 
-app.use(function(req, res, next) {
+/*app.use(function(req, res, next) {
 	if(!req.secure) {
 		var hostname = ( req.headers.host.match(/:/g) ) ? req.headers.host.slice( 0, req.headers.host.indexOf(":") ) : req.headers.host;
 		return res.redirect(['https://', hostname, ':', ports, req.url].join(''));
 	}
 	next();
 });
-
+*/
 
 var server = https.createServer(credentials, app);
-server.listen(ports);
+
 // launch ======================================================================
-app.listen(port);
+server.listen(ports); //HTTPS
+app.listen(port);     // HTTP
+
 console.log('HTTPS Server running on port ' + ports);
 console.log('HTTP Server running on port ' + port);
