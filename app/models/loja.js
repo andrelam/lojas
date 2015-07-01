@@ -13,7 +13,7 @@ var lojaSchema = mongoose.Schema({
 	admin           : { type: ObjectId, ref: 'Users' },
 	ativa           : { type: Boolean, default: true },
 	membros         : [ {
-		irmao       : { type: ObjectId, ref: 'Irmaos' },
+		irmao       : { type: ObjectId, ref: 'Irmao' },
 		ativo       : { type: Boolean, default: true } }
 	],
 	dados           : {

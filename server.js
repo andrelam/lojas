@@ -67,13 +67,14 @@ app.use(session({
 
 app.set('jsonkeysecret', configSecret.secret.secret);
 
+/*
 app.use(csrf({ cookie: true }));
 
 app.use(function (req, res, next) {
 	res.locals._csrf = req.csrfToken();
 	next();
 });
-
+*/ // Disable while testing
 app.use(express.static(path.join(__dirname, '/public'))); //Expose /public
 
 // routes ======================================================================

@@ -29,6 +29,42 @@ var irmaoSchema = mongoose.Schema({
 			cep        : { type: String },
 			tempo      : { type: String }
 		}],
+		simbolico    : {
+			cim      : { type: Number },
+			iniciado : { type: Date },
+			elevado  : { type: Date },
+			exaltado : { type: Date },
+			instalado: { type: Date },
+			lojas      : [{
+				loja   : { type: ObjectId, ref: 'Loja', default: null },
+				membro : { 
+					ativo  : { type: Boolean },
+					desde  : { type: Date },
+					ate    : { type: Date },
+					tipo   : { type: String, enum: ['Emérito', 'Remido', 'Outro']},
+					filiado: { type: Boolean }  // true: membro filiado; false: membro permanente
+				},
+				cargo      : { type: String }
+			}]
+		},
+		filosofico  : {
+			ime     : { type: Number },
+			graus   : [{
+				grau: { type: Number },
+				data: { type: Date }
+			}],
+			lojas      : [{
+				loja   : { type: ObjectId, ref: 'Loja', default: null },
+				membro : { 
+					ativo  : { type: Boolean },
+					desde  : { type: Date },
+					ate    : { type: Date },
+					tipo   : { type: String, enum: ['Emérito', 'Remido', 'Outro']},
+					filiado: { type: Boolean }  // true: membro filiado; false: membro permanente
+				},
+				cargo      : { type: String }
+			}]
+		},
 		contato     : [{
 			tipo    : { type: String },
 			valor   : { type: String }
@@ -118,15 +154,66 @@ var irmaoSchema = mongoose.Schema({
 			user: { type: ObjectId, ref: 'Users', default: null },
 			date: { type: Date, default: Date.now }
 		},
-		editedBy: {
+		editedBy: [{
 			user: { type: ObjectId, ref: 'Users', default: null },
 			date: { type: Date, default: Date.now }
+		}]
+	}
+}, { collection: 'Irmao' });
+
+irmaoSchema.virtual('eMacom').get(function() {
+	return (this.perfil.simbolico.cim > 0);
+});
+
+irmaoSchema.virtual('simb.grau').get(function() {
+	if (this.perfil.simbolico.exaltado)
+		return 3;
+	if (this.perfil.simbolico.elevado)
+		return 2;
+	if (this.perfil.simbolico.iniciado)
+		return 1;
+	return 0;
+});
+
+irmaoSchema.virtual('simb.instalado').get(function() {
+	return (this.perfil.simbolico.instalado ? true : false);
+});
+
+irmaoSchema.virtual('filos.grau').get(function() {
+	var grau = Math.max.apply(null, this.perfil.filosofico.graus.map(function(e) {
+		return e.grau;
+	}));
+	return grau;
+});
+
+irmaoSchema.virtual('filos.ultElev').get(function() {
+	var ultElev = Math.max.apply(null, this.perfil.filosofico.graus.map(function(e) {
+		return e.data;
+	}));
+	return ultElev;
+});
+
+irmaoSchema.methods.isFromLodge = function(loja) {
+	var retorno = false;
+	if (this.perfil.simbolico.lojas.length != 0) {
+		this.perfil.simbolico.lojas.length.forEach(function(item) {
+			if (item.loja === loja)
+				retorno = true;
+		});
+	} else {
+		if (this.perfil.filosofico.lojas.length != 0) {
+			this.perfil.filosofico.lojas.length.forEach(function(item) {
+				if (item.loja === loja)
+					retorno = true;
+			});
 		}
 	}
+	return retorno;
+}
 
-}, { collection: 'Irmaos' });
+irmaoSchema.set('toJSON', { getters: true, virtuals: true });
 
 // create the model for users and expose it to our app
-var Irmao = mongoose.model('Irmaos', irmaoSchema);
+var Irmao = mongoose.model('Irmao', irmaoSchema);
 
 module.exports = Irmao;
