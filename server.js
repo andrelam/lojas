@@ -7,7 +7,8 @@ var ENV = process.env.NODE_ENV || 'dev'; // Assume dev env. for safety
 var fs         = require('fs');
 var express    = require('express');
 var app        = express();
-var port       = process.env.PORT || 8080;
+var port       = process.env.PORT || 8000;
+var ports      = process.env.PORTS || 8080;
 var mongoose   = require('mongoose');
 var passport   = require('passport');
 var path       = require('path');
@@ -57,7 +58,8 @@ app.use(session({
 	store: new mongoStore({ mongooseConnection: mongoose.connection }),
 	secret: configSecret.secret.secret,
 	resave: configSecret.secret.resave,
-	saveUninitialized: configSecret.secret.saveUninitialized }));
+	saveUninitialized: configSecret.secret.saveUninitialized,
+	cookie: {httpOnly: true, secure: true} }));
 
 app.set('jsonkeysecret', configSecret.secret.secret);
 
@@ -76,16 +78,18 @@ var credentials = {
     cert: hscert
 };
 
-/*app.use(function(req, res, next) {
-  if(!req.secure) {
-    return res.redirect(['https://', req.get('Host'), req.url].join(''));
-  }
-  next();
+app.use(function(req, res, next) {
+	if(!req.secure) {
+		var hostname = ( req.headers.host.match(/:/g) ) ? req.headers.host.slice( 0, req.headers.host.indexOf(":") ) : req.headers.host;
+		return res.redirect(['https://', hostname, ':', ports, req.url].join(''));
+	}
+	next();
 });
-*/
+
 
 var server = https.createServer(credentials, app);
-server.listen(port);
+server.listen(ports);
 // launch ======================================================================
-//app.listen(port);
-console.log('HTTPS Server running on port ' + port);
+app.listen(port);
+console.log('HTTPS Server running on port ' + ports);
+console.log('HTTP Server running on port ' + port);
