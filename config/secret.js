@@ -3,7 +3,7 @@ module.exports = {
 
     'dev': {
 		secret: {
-			secret: 'esquadroecompasso',
+			secret: 'secret',
 			resave: true,
 			saveUninitialized: true,
 			cookie: {
@@ -12,14 +12,14 @@ module.exports = {
 			}
 		},
 		hash: {
-			secret: 'esquadroecompasso',
-			id    : 'esquadroecompasso',
-			value : 'esquadroecompasso'
+			secret: 'secret',
+			id    : 'secret',
+			value : 'secret'
 		}
     },
     'prod': {
 		secret: {
-			secret: 'meusirmaoscomotalmereconhecem',
+			secret: 'secret',
 			resave: true,
 			saveUninitialized: true,
 			cookie: {
@@ -28,9 +28,9 @@ module.exports = {
 			}
 		},
 		hash: {
-			secret: 'meusirmaoscomotalmereconhecem',
-			id    : 'meusirmaoscomotalmereconhecem',
-			value : 'meusirmaoscomotalmereconhecem'
+			secret: 'secret',
+			id    : 'secret',
+			value : 'secret'
 		}
     }
 
