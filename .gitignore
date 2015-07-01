@@ -47,3 +47,6 @@ node_modules
 
 #SSL Certificates
 sslcerts
+
+#Secrets
+config/secret.js
